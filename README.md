@@ -10,7 +10,7 @@ This application helps users practice ASL by combining:
 - **AI-powered voice guidance** using Murf TTS  
 - **Conversation log** to review practice  
 
-Currently, the project includes a **basic set of common words and phrases**. Future updates will expand vocabulary and introduce **3D/animated avatars** for sign demonstrations.  
+Future updates will expand the vocabulary and introduce 3D animated avatars for sign demonstrations. 
 
 ## 🖼 Features
 
@@ -19,6 +19,10 @@ Currently, the project includes a **basic set of common words and phrases**. Fut
 - 🔊 Text-to-Speech with **Murf API**  
 - 💬 Conversation tracking panel  
 - 🎨 Clean, responsive UI with **React + TailwindCSS**  
+
+## Screenshot
+
+![App Screenshot](./assets/screenshot.png)
 
 ## 🚀 Getting Started
 
