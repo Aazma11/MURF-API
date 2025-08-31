@@ -22,7 +22,7 @@ Future updates will expand the vocabulary and introduce 3D animated avatars for 
 
 ## Screenshot
 
-![App Screenshot](./assets/screenshot.png)
+![App Screenshot](./assets/Screenshot.png)
 
 ## 🚀 Getting Started
 
