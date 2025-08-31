@@ -1,3 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+
+# Editor settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
 # Logs
 logs
 *.log
