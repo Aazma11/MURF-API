@@ -7,7 +7,7 @@ import { getGesture } from '../utils/aslMapping'
 const VoiceInput: React.FC = () => {
   const [inputText, setInputText] = useState('')
   const { transcript, isListening, startListening, stopListening, resetTranscript, error } = useSpeechRecognition()
-  const { dispatch, state } = useChat()
+  const { dispatch } = useChat()
 
   // Auto-process transcript when it changes
   useEffect(() => {

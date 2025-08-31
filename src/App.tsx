@@ -1,4 +1,3 @@
-import React from 'react'
 import VoiceInput from './components/VoiceInput'
 import ChatInterface from './components/ChatInterface'
 import GestureDisplay from './components/GestureDisplay'

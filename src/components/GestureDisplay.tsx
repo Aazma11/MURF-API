@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useChat } from '../providers/ChatProvider'
 import { getGesture } from '../utils/aslMapping'
 import { useMurfTTS } from '../hooks/useMurfTTS'
-import { Volume2, VolumeX, Play } from 'lucide-react'
+import { Volume2, VolumeX } from 'lucide-react'
 
 const GestureDisplay: React.FC = () => {
   const { state } = useChat()

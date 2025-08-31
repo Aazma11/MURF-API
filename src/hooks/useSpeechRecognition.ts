@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 
+// Add TypeScript declarations for Speech Recognition
+declare global {
+  interface Window {
+    SpeechRecognition: any
+    webkitSpeechRecognition: any
+  }
+}
+
 interface UseSpeechRecognitionReturn {
   transcript: string
   isListening: boolean
@@ -35,14 +43,14 @@ export const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
       setError(null)
     }
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: any) => {
       console.log('🎤 Speech result received:', event)
       const transcript = event.results[0][0].transcript
       console.log('🎤 Final transcript:', transcript)
       setTranscript(transcript)
     }
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: any) => {
       console.error(' Speech recognition error:', event.error)
       setError(`Speech recognition error: ${event.error}`)
       setIsListening(false)
