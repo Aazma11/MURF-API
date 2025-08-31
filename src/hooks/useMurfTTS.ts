@@ -16,33 +16,30 @@ export const useMurfTTS = (): UseMurfTTSReturn => {
     try {
       console.log('🎤 Attempting to speak:', text)
       
-      // Stop any current speech first
+      
       stop()
       
       setIsSpeaking(true)
       setError(null)
 
-      // Check if speech synthesis is available
+      
       if (!('speechSynthesis' in window)) {
         throw new Error('Speech synthesis not supported in this browser')
       }
 
-      // Wait for speech synthesis to be ready
+      
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel()
         await new Promise(resolve => setTimeout(resolve, 100))
       }
 
-      // Create utterance
       const utterance = new SpeechSynthesisUtterance(text)
       utterance.rate = 0.8
       utterance.pitch = 1
       utterance.volume = 1
-      
-      // Store reference to prevent garbage collection
       utteranceRef.current = utterance
       
-      // Add event listeners
+      
       utterance.onstart = () => {
         console.log('🎤 Speech started successfully')
       }
@@ -62,10 +59,9 @@ export const useMurfTTS = (): UseMurfTTSReturn => {
         utteranceRef.current = null
       }
       
-      // Speak the text
-      window.speechSynthesis.speak(utterance)
       
-      // Force resume if paused
+      window.speechSynthesis.speak(utterance)
+     
       setTimeout(() => {
         if (window.speechSynthesis.paused) {
           window.speechSynthesis.resume()

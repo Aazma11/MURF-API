@@ -1,4 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
+interface Window {
+  SpeechRecognition: any
+  webkitSpeechRecognition: any
+}
 
 // Add TypeScript declarations for Speech Recognition
 declare global {
@@ -32,8 +36,8 @@ export const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
 
-    recognition.continuous = false  // Changed to false for better results
-    recognition.interimResults = false  // Changed to false for final results only
+    recognition.continuous = false  
+    recognition.interimResults = false  
     recognition.lang = 'en-US'
     recognition.maxAlternatives = 1
 
@@ -73,7 +77,7 @@ export const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
   const startListening = () => {
     console.log('🎤 Starting speech recognition...')
     if (recognitionRef.current) {
-      setTranscript('')  // Clear previous transcript
+      setTranscript('')  
       recognitionRef.current.start()
     }
   }

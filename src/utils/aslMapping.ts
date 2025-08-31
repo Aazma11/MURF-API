@@ -6,7 +6,6 @@ export interface ASLGesture {
 }
 
 export const aslGestures: { [key: string]: ASLGesture } = {
-  // Individual words
   "hello": {
     name: "Hello",
     description: "Raise right hand to forehead, then bring down in a salute motion",
@@ -139,8 +138,6 @@ export const aslGestures: { [key: string]: ASLGesture } = {
     instructions: "Point your index finger forward toward the person you're talking to",
     category: "pronouns"
   },
-
-  // Phrases and Sentences
   "how are you": {
     name: "How Are You",
     description: "Combination of signs: how + are + you",
