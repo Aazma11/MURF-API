@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface UseSpeechRecognitionReturn {
   transcript: string
@@ -13,6 +13,7 @@ export const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
   const [transcript, setTranscript] = useState('')
   const [isListening, setIsListening] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const recognitionRef = useRef<any>(null)
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -23,59 +24,56 @@ export const useSpeechRecognition = (): UseSpeechRecognitionReturn => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
 
-    recognition.continuous = true
-    recognition.interimResults = true
+    recognition.continuous = false  // Changed to false for better results
+    recognition.interimResults = false  // Changed to false for final results only
     recognition.lang = 'en-US'
+    recognition.maxAlternatives = 1
 
     recognition.onstart = () => {
+      console.log(' Speech recognition started')
       setIsListening(true)
       setError(null)
     }
 
     recognition.onresult = (event) => {
-      let finalTranscript = ''
-      let interimTranscript = ''
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript
-        } else {
-          interimTranscript += transcript
-        }
-      }
-
-      setTranscript(finalTranscript + interimTranscript)
+      console.log('🎤 Speech result received:', event)
+      const transcript = event.results[0][0].transcript
+      console.log('🎤 Final transcript:', transcript)
+      setTranscript(transcript)
     }
 
     recognition.onerror = (event) => {
+      console.error(' Speech recognition error:', event.error)
       setError(`Speech recognition error: ${event.error}`)
       setIsListening(false)
     }
 
     recognition.onend = () => {
+      console.log(' Speech recognition ended')
       setIsListening(false)
     }
 
-    // Store recognition instance for external control
-    ;(window as any).speechRecognition = recognition
+    recognitionRef.current = recognition
 
     return () => {
-      recognition.abort()
+      if (recognitionRef.current) {
+        recognitionRef.current.abort()
+      }
     }
   }, [])
 
   const startListening = () => {
-    const recognition = (window as any).speechRecognition
-    if (recognition) {
-      recognition.start()
+    console.log('🎤 Starting speech recognition...')
+    if (recognitionRef.current) {
+      setTranscript('')  // Clear previous transcript
+      recognitionRef.current.start()
     }
   }
 
   const stopListening = () => {
-    const recognition = (window as any).speechRecognition
-    if (recognition) {
-      recognition.stop()
+    console.log('🎤 Stopping speech recognition...')
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
     }
   }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Mic, MicOff, Send } from 'lucide-react'
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition'
 import { useChat } from '../providers/ChatProvider'
@@ -7,10 +7,20 @@ import { getGesture } from '../utils/aslMapping'
 const VoiceInput: React.FC = () => {
   const [inputText, setInputText] = useState('')
   const { transcript, isListening, startListening, stopListening, resetTranscript, error } = useSpeechRecognition()
-  const { dispatch } = useChat()
+  const { dispatch, state } = useChat()
+
+  // Auto-process transcript when it changes
+  useEffect(() => {
+    if (transcript && transcript.trim()) {
+      console.log(' SPEECH DETECTED:', transcript)
+      processMessage(transcript)
+    }
+  }, [transcript])
 
   const processMessage = (textToSend: string) => {
     if (!textToSend.trim()) return
+
+    console.log(' PROCESSING MESSAGE:', textToSend)
 
     const message = {
       id: Date.now().toString(),
@@ -27,18 +37,26 @@ const VoiceInput: React.FC = () => {
     setTimeout(() => {
       dispatch({ type: 'SET_PROCESSING', payload: false })
       
-      // Extract first word and get gesture
-      const firstWord = textToSend.toLowerCase().split(' ')[0]
-      const gesture = getGesture(firstWord)
+      // First try to match the entire phrase
+      const cleanText = textToSend.toLowerCase().trim()
+      console.log(' LOOKING FOR PHRASE:', cleanText)
+      let gesture = getGesture(cleanText)
+      
+      // If no phrase match, try the first word
+      if (!gesture) {
+        const firstWord = cleanText.split(' ')[0]
+        console.log('🔍 LOOKING FOR WORD:', firstWord)
+        gesture = getGesture(firstWord)
+      }
       
       if (gesture) {
-        // Only set gesture if it exists in our database
-        dispatch({ type: 'SET_CURRENT_GESTURE', payload: firstWord })
+        console.log('✅ FOUND GESTURE:', gesture.name)
+        dispatch({ type: 'SET_CURRENT_GESTURE', payload: cleanText })
       } else {
-        // Clear gesture if not found
+        console.log('❌ NO GESTURE FOUND FOR:', cleanText)
         dispatch({ type: 'SET_CURRENT_GESTURE', payload: null })
       }
-    }, 2000)
+    }, 1000)
   }
 
   const handleSendMessage = () => {
@@ -49,9 +67,12 @@ const VoiceInput: React.FC = () => {
   }
 
   const handleVoiceToggle = () => {
+    console.log(' VOICE TOGGLE CLICKED')
     if (isListening) {
+      console.log(' STOPPING LISTENING')
       stopListening()
     } else {
+      console.log(' STARTING LISTENING')
       startListening()
     }
   }

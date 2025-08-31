@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 interface UseMurfTTSReturn {
   isSpeaking: boolean
@@ -10,34 +10,70 @@ interface UseMurfTTSReturn {
 export const useMurfTTS = (): UseMurfTTSReturn => {
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
 
   const speak = async (text: string) => {
     try {
-      console.log('Speaking:', text)
+      console.log('🎤 Attempting to speak:', text)
+      
+      // Stop any current speech first
+      stop()
+      
       setIsSpeaking(true)
       setError(null)
 
-      // Use browser speech synthesis
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text)
-        utterance.rate = 0.8
-        utterance.pitch = 1
-        utterance.volume = 1
-        
-        utterance.onend = () => {
-          setIsSpeaking(false)
-        }
-        
-        utterance.onerror = (event) => {
-          setError('Speech synthesis failed')
-          setIsSpeaking(false)
-        }
-        
-        speechSynthesis.speak(utterance)
-      } else {
-        throw new Error('Speech synthesis not supported')
+      // Check if speech synthesis is available
+      if (!('speechSynthesis' in window)) {
+        throw new Error('Speech synthesis not supported in this browser')
       }
+
+      // Wait for speech synthesis to be ready
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel()
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+
+      // Create utterance
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.rate = 0.8
+      utterance.pitch = 1
+      utterance.volume = 1
+      
+      // Store reference to prevent garbage collection
+      utteranceRef.current = utterance
+      
+      // Add event listeners
+      utterance.onstart = () => {
+        console.log('🎤 Speech started successfully')
+      }
+      
+      utterance.onend = () => {
+        console.log('🎤 Speech ended')
+        setIsSpeaking(false)
+        utteranceRef.current = null
+      }
+      
+      utterance.onerror = (event) => {
+        console.error('🎤 Speech error:', event.error)
+        if (event.error !== 'interrupted') {
+          setError(`Speech error: ${event.error}`)
+        }
+        setIsSpeaking(false)
+        utteranceRef.current = null
+      }
+      
+      // Speak the text
+      window.speechSynthesis.speak(utterance)
+      
+      // Force resume if paused
+      setTimeout(() => {
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume()
+        }
+      }, 50)
+      
     } catch (err) {
+      console.error(' TTS Error:', err)
       setError(err instanceof Error ? err.message : 'Unknown error')
       setIsSpeaking(false)
     }
@@ -45,7 +81,12 @@ export const useMurfTTS = (): UseMurfTTSReturn => {
 
   const stop = () => {
     if ('speechSynthesis' in window) {
-      speechSynthesis.cancel()
+      window.speechSynthesis.cancel()
+    }
+    if (utteranceRef.current) {
+      utteranceRef.current.onend = null
+      utteranceRef.current.onerror = null
+      utteranceRef.current = null
     }
     setIsSpeaking(false)
     setError(null)
