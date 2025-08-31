@@ -3,6 +3,7 @@ import VoiceInput from './components/VoiceInput'
 import ChatInterface from './components/ChatInterface'
 import GestureDisplay from './components/GestureDisplay'
 import { ChatProvider } from './providers/ChatProvider'
+import { useChat } from './providers/ChatProvider'
 
 function App() {
   return (

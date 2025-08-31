@@ -12,7 +12,7 @@ const GestureDisplay: React.FC = () => {
 
   // Test voice function
   const testVoice = async () => {
-    console.log('Testing voice...')
+    console.log('=== TEST VOICE BUTTON CLICKED ===')
     try {
       await speak("Hello! This is a test of the voice system.")
     } catch (err) {
@@ -22,9 +22,13 @@ const GestureDisplay: React.FC = () => {
 
   // Auto-speak when gesture changes
   useEffect(() => {
+    console.log('=== GESTURE CHANGED ===')
+    console.log('Current gesture:', currentGesture?.name)
+    console.log('Is processing:', state.isProcessing)
+    
     if (currentGesture && !state.isProcessing) {
       const instructionText = `Great! Now let's learn the sign for "${currentGesture.name}". ${currentGesture.instructions}. Ready to practice?`
-      console.log('Murf TTS: Speaking:', instructionText)
+      console.log('Auto-speaking:', instructionText)
       speak(instructionText).catch(err => {
         console.error('Auto-speak error:', err)
       })
@@ -32,6 +36,7 @@ const GestureDisplay: React.FC = () => {
   }, [currentGesture, state.isProcessing, speak])
 
   const handleManualSpeak = async () => {
+    console.log('=== MANUAL SPEAK CLICKED ===')
     if (currentGesture) {
       const instructionText = `Great! Now let's learn the sign for "${currentGesture.name}". ${currentGesture.instructions}. Ready to practice?`
       try {
@@ -43,6 +48,7 @@ const GestureDisplay: React.FC = () => {
   }
 
   const handleVoiceToggle = async () => {
+    console.log('=== VOICE TOGGLE CLICKED ===')
     if (isSpeaking) {
       stop()
     } else {
@@ -79,7 +85,7 @@ const GestureDisplay: React.FC = () => {
       
       {error && (
         <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg">
-          <strong>Murf TTS Error:</strong> {error}
+          <strong>TTS Error:</strong> {error}
         </div>
       )}
       
@@ -108,7 +114,7 @@ const GestureDisplay: React.FC = () => {
           {isSpeaking && (
             <div className="flex items-center space-x-2 text-blue-600">
               <div className="animate-pulse">🔊</div>
-              <span className="text-sm">Murf TTS speaking instructions...</span>
+              <span className="text-sm">Speaking instructions...</span>
             </div>
           )}
         </div>

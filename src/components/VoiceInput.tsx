@@ -32,10 +32,11 @@ const VoiceInput: React.FC = () => {
       const gesture = getGesture(firstWord)
       
       if (gesture) {
+        // Only set gesture if it exists in our database
         dispatch({ type: 'SET_CURRENT_GESTURE', payload: firstWord })
       } else {
-        // If no gesture found, show the word anyway
-        dispatch({ type: 'SET_CURRENT_GESTURE', payload: firstWord })
+        // Clear gesture if not found
+        dispatch({ type: 'SET_CURRENT_GESTURE', payload: null })
       }
     }, 2000)
   }
