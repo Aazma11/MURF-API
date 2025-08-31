@@ -24,8 +24,8 @@ Currently, the project includes a **basic set of common words and phrases**. Fut
 
 ### Clone the repository
 ```bash
-git clone https://github.com/your-repo/murf-asl-assistant.git
-cd murf-asl-assistant
+git clone https://github.com/Aazma11/SignLearn.git
+cd SignLearn
 ```
 ### Install dependencies
 ```bash
